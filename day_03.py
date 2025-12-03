@@ -1,5 +1,4 @@
-from itertools import combinations
-
+import numpy as np
 
 EXAMPLE = """987654321111111
 811111111111119
@@ -9,17 +8,15 @@ EXAMPLE = """987654321111111
 
 def get_largest_joltage_in_bank(bank: str, num_batteries: int) -> int:
     max_joltage = 0
-    # old implementation:
-    #for i in range(len(bank)):
-    #    for j in range(i + 1, len(bank)):
-    #        number = int(f"{bank[i]}{bank[j]}")
-    #        if number > max_joltage:
-    #            max_joltage = number
+    bank = [int(n) for n in bank]
 
-    for combi in combinations(bank, num_batteries):
-        joltage = int("".join(combi))
-        if joltage > max_joltage:
-            max_joltage = joltage
+    indices = []
+    for i in range(num_batteries):
+        start = (indices[-1] + 1) if indices else 0
+        end = (i - num_batteries + 1) or None
+        indices.append(np.argmax(bank[start:end]) + start)
+
+    max_joltage = sum(10 ** pos * int(bank[index]) for pos, index in enumerate(reversed(indices)))
     
     print(f"BANK: {bank} => MAX {max_joltage:>2} joltage")
     return max_joltage
