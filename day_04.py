@@ -54,6 +54,9 @@ def count_accessible_paper_rolls(grid: Grid):
     positions = []
     for y in range(len(grid)):
         for x in range(len(grid[0])):
+            if grid[y][x] != "@":
+                continue
+            
             if check_neighbors(x, y, grid):
                 count += 1
                 positions.append((x, y))
@@ -79,4 +82,11 @@ if __name__ == "__main__":
     print(accessible_paper_rolls)
     
     assert accessible_paper_rolls == 13
+
+    with open("inputs/day_04.txt") as file:
+        map_data = file.read()
+
+    grid = map_to_grid(map_data)
+    accessible_paper_rolls, positions = count_accessible_paper_rolls(grid)
+    print("Accessible paper rolls:", accessible_paper_rolls)
 
