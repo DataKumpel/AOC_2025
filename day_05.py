@@ -53,6 +53,50 @@ def count_fresh_ingredients(db_raw: str) -> int:
     return fresh_count
 
 
+def collapse_id_ranges(id_ranges: list[range]) -> list[range]:
+    collapsed: list[range] = []
+    for id_range in id_ranges:
+        for index, checked_range in enumerate(collapsed):
+            # Case 1: Contained in another range:
+            if id_range.start in checked_range and id_range.stop in checked_range:
+                print(id_range, "contained in", checked_range)
+                break
+
+            # Case 2: Extends both limits:
+            if id_range.start < checked_range.start and id_range.stop > checked_range.stop:
+                collapsed[index] = id_range
+                print(id_range, "extends BOTH limits of", checked_range)
+                break
+
+            # Case 3: Extends lower limit:
+            if id_range.start < checked_range.start and id_range.stop in checked_range:
+                collapsed[index] = range(id_range.start, checked_range.stop)
+                print(id_range, "extends LOWER limit of", checked_range)
+                break
+            
+            # Case 4: Extends upper limit:
+            if id_range.stop > checked_range.stop and id_range.start in checked_range:
+                collapsed[index] = range(checked_range.start, id_range.stop)
+                print(id_range, "extends UPPER limit of", checked_range)
+                break
+            
+        else:
+            #print(id_range, "is a new seperate range")
+            collapsed.append(id_range)
+
+    return collapsed
+
+
+def fully_collapse_id_ranges(id_ranges: list[range]) -> list[range]:
+    while True:
+        num_ranges = len(id_ranges)
+        id_ranges = collapse_id_ranges(id_ranges)
+        if num_ranges - len(id_ranges) == 0:
+            break
+
+    return id_ranges
+
+
 if __name__ == "__main__":
     fresh_ex = count_fresh_ingredients(EXAMPLE)
     print(fresh_ex)
@@ -63,4 +107,23 @@ if __name__ == "__main__":
 
     fresh_count = count_fresh_ingredients(db_raw)
     print("Fresh ingredients:", fresh_count)
+
+    ##### Part II ##################################################################################
+    id_ranges, _ = read_ingredient_db(EXAMPLE)
+
+    id_ranges = fully_collapse_id_ranges(id_ranges)
+    print(id_ranges)
+    num_correct_ids = sum(len(r) for r in id_ranges)
+    print(num_correct_ids)
+    assert num_correct_ids == 14
+
+    id_ranges, _ = read_ingredient_db(db_raw)
+    id_ranges = fully_collapse_id_ranges(id_ranges)
+    num_correct_ids = sum(len(r) for r in id_ranges)
+
+    print("Final ID-Ranges:")
+    for id_range in id_ranges:
+        print("\t", id_range)
+    
+    print("Number of correct IDs:", num_correct_ids)
     
