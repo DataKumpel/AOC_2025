@@ -74,11 +74,24 @@ def print_grid(grid):
     print(grid_str)
 
 
+def collect_all_accessible_paper_rolls(grid: Grid) -> int:
+    collected = 0
+    while True:
+        count, positions = count_accessible_paper_rolls(grid)
+        if count == 0:
+            break
+        
+        collected += count
+        mark_positions_on_grid(positions, grid)
+
+    return collected
+
+
 if __name__ == "__main__":
     example_grid = map_to_grid(EXAMPLE)
     accessible_paper_rolls, positions = count_accessible_paper_rolls(example_grid)
-    mark_positions_on_grid(positions, example_grid)
-    print_grid(example_grid)
+    #mark_positions_on_grid(positions, example_grid)
+    #print_grid(example_grid)
     print(accessible_paper_rolls)
     
     assert accessible_paper_rolls == 13
@@ -89,4 +102,12 @@ if __name__ == "__main__":
     grid = map_to_grid(map_data)
     accessible_paper_rolls, positions = count_accessible_paper_rolls(grid)
     print("Accessible paper rolls:", accessible_paper_rolls)
+
+    ##### PART II ##################################################################################
+    collected_ex = collect_all_accessible_paper_rolls(example_grid)
+    print(collected_ex)
+    assert collected_ex == 43
+
+    collected = collect_all_accessible_paper_rolls(grid)
+    print("Collected paper rolls:", collected)
 
