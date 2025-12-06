@@ -57,4 +57,10 @@ if __name__ == "__main__":
     fresh_ex = count_fresh_ingredients(EXAMPLE)
     print(fresh_ex)
     assert fresh_ex == 3
+
+    with open("inputs/day_05.txt") as file:
+        db_raw = file.read()
+
+    fresh_count = count_fresh_ingredients(db_raw)
+    print("Fresh ingredients:", fresh_count)
     
